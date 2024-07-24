@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import torch
 import torch.nn as nn
@@ -22,29 +23,35 @@ import random
 import Registration_test
 import time
 
+parser = argparse.ArgumentParser("Proposed method execute", add_help=True)
+parser.add_argument("--save_path", "-s", type=str,default="checkpoint/model_weight_epoch300_batchsize32_plane.pth", required=True, help="path to save file")
+parser.add_argument("--pattern", type=str, default="A", help="Target Pattern")
+
+args = parser.parse_args()
+
 # モデルのロード
-save_path = "/home/nishidalab0/MaskNet/checkpoint/model_weight_epoch300_batchsize32_plane.pth"
+save_path = args.save_path
 model_load = torch.load(save_path)
 
-# テンプレートデータのロード
-pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016.pcd"
-# ソースデータのロード
-if Registration_test.theta == 0:   ## 0度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_cheese_noise.pcd"
-elif Registration_test.theta == 45:   ## 45度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_45_3.pcd"
-elif Registration_test.theta == 90:   ## 90度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_90_1.pcd"
-elif Registration_test.theta == 135:   ## 135度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_135_2.pcd"
-elif Registration_test.theta == "L_90":   ## L90 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_90_4.pcd"
-	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020.pcd"
-elif Registration_test.theta == "L_180":   ## L180 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_180_2.pcd"
-	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020.pcd"
+pattern = args.pattern
+if  pattern== "A":   ## Pattern A  (0度) ##
+	pcd_file = "TNUTEJN016.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_cheese_noise.pcd" # ソースデータのロード
+elif pattern == "45":   ## 45度 ##
+	pcd_file = "TNUTEJN016.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_45_3.pcd" # ソースデータのロード
+elif pattern == "B":   ## Pattern B  (90度) ##
+	pcd_file = "TNUTEJN016.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_90_1.pcd" # ソースデータのロード
+elif pattern == "135":   ## 135度 ##
+	pcd_file = "TNUTEJN016.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_135_2.pcd" # ソースデータのロード
+elif pattern == "D":   ## Pattern D  (L90) ##
+	pcd_rot_file = "sensor_Ljoint_90_4.pcd" # テンプレートデータのロード
+	pcd_file = "WMU2LR2020.pcd" # ソースデータのロード
+elif pattern == "C":   ## Pattern C  (L180) ##
+	pcd_rot_file = "sensor_Ljoint_180_2.pcd" # テンプレートデータのロード
+	pcd_file = "WMU2LR2020.pcd" # ソースデータのロード
 
 # テンプレとソースを点群データに変換
 pcd_cheese = o3d.io.read_point_cloud(pcd_file)
@@ -73,18 +80,18 @@ points_inside = points[(points >= min_bound) & (points <= max_bound)].reshape(-1
 
 density = num_points / ( box_width * box_height * box_depth )
 ###print("密度：", density)
-if Registration_test.theta == 0:   ## 0度 ##
-	weight = 0.8   # 0度
-elif Registration_test.theta == 45:   ## 90度 ##
-	weight = 0.8   # 90度
-elif Registration_test.theta == 90:   ## 90度 ##
-	weight = 0.8   # 90度
-elif Registration_test.theta == 135:   ## 90度 ##
-	weight = 0.8   # 90度
-elif Registration_test.theta == "L_90":   ## 90度 ##
-	weight = 0.8   # 90度
-elif Registration_test.theta == "L_180":   ## 90度 ##
-	weight = 0.8   # 90度
+if pattern == "A":   
+	weight = 0.8   
+elif pattern == "45":  
+	weight = 0.8   
+elif pattern == "B":   
+	weight = 0.8   
+elif pattern == "135":   
+	weight = 0.8   
+elif pattern == "D":
+	weight = 0.8   
+elif pattern == "C":   
+	weight = 0.8   
 voxel_size = weight * (1.0 / density) ** (1/3)
 ###print("ダウンサンプリングのボックスの大きさ：", voxel_size)
 
@@ -145,7 +152,8 @@ for i in range(n):
 		template_cheese.detach().cpu().numpy()[0], 
 		source_cheese.detach().cpu().numpy()[0], 
 		est_T_cheese.detach().cpu().numpy()[0], 
-		masked_template_cheese.detach().cpu().numpy()[0])
+		masked_template_cheese.detach().cpu().numpy()[0],
+		pattern)
 	
 	sum_diff_R += Registration_test.diff_R
 	sum_diff_t += Registration_test.diff_t

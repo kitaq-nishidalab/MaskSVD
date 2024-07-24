@@ -1,39 +1,13 @@
 import numpy as np
 import torch
-"""
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
-import h5py
-import subprocess
-import shlex
-import json
-import glob
-from sklearn.neighbors import NearestNeighbors
-from scipy.spatial.distance import minkowski
-from scipy.spatial import cKDTree
-from scipy.spatial.transform import Rotation
-from torch import sin, cos
-"""
 import open3d as o3d
-"""
-from tqdm import tqdm
-import torchvision
-import logging
-import random
-import os
-import numpy.linalg as LA
-from sklearn.preprocessing import StandardScaler
-"""
 import matplotlib.pyplot as plt
 import copy
 from scipy.spatial.transform import Rotation
 from numpy.linalg import svd
 from mpl_toolkits.mplot3d import Axes3D
 
-global theta
-theta = 90
+
 
 def rotation_matrix_to_euler_angles(R):
     # Extract angles using trigonometric relations
@@ -149,7 +123,7 @@ class ICP:
 		return result
 
 	# icp registration.
-	def __call__(self, template, source):
+	def __call__(self, template, source, pattern):
 		self.is_tensor = torch.is_tensor(template)
 		
 		### 原点を表示 ###
@@ -183,14 +157,7 @@ class ICP:
 		
 		# tensorからo3d
 		template, source = self.preprocess(template, source)
-		# z軸方向に回転
-		#theta_z = np.radians(-60)
-		#R_z = np.array(
-		#[[np.cos(theta_z), -np.sin(theta_z), 0], 
-		#[np.sin(theta_z), np.cos(theta_z), 0], 
-		#[0, 0, 1]])
-		#numpy_source2 = np.matmul(R_z, np.array(source.points).T)
-		#source.points = o3d.utility.Vector3dVector(numpy_source2.T)
+		
 		"""
 		jusin_ato = np.mean(np.array(source.points), axis=0)
 		jusin_ido = jusin_ato - jusin_mae
@@ -208,17 +175,17 @@ class ICP:
 		source_copy = copy.deepcopy(source)
 		
 		### ダウンサンプリング ###
-		if theta == 0:
+		if pattern == "A":
 			voxel_size = 0.008     # 0度
-		elif theta == 45:
+		elif pattern == "45":
 			voxel_size = 0.011     # 45度
-		elif theta == 90:
+		elif pattern == "B":
 			voxel_size = 0.015     # 90度
-		elif theta == 135:
+		elif pattern == "135":
 			voxel_size = 0.015     # 180度
-		elif theta == "L_90":
+		elif pattern == "D":
 			voxel_size = 0.011    # L90度
-		elif theta == "L_180":
+		elif pattern == "C":
 			voxel_size = 0.011    # L180度
 		
 		template = template.voxel_down_sample(voxel_size)
@@ -438,29 +405,18 @@ class ICP:
 def registration_algorithm():
   
   reg_algorithm = ICP()
-  """
-  pretrained_reg = "/home/nishidalab/MaskNet/no_noise_pointlk.pth"
-  
-  pnlk = PointNetLK.PointNetLK()
-  if pretrained_reg:
-      assert os.path.isfile(pretrained_reg)
-      pnlk.load_state_dict(torch.load(pretrained_reg, map_location='cpu'))
-      print("PointNetLK pretrained model loaded successfully!")
-  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  pnlk = pnlk.to(device)
-  reg_algorithm = pnlk
-  """
   
   return reg_algorithm
 
 
 # Register template and source pairs.
 class Registration:
-	def __init__(self):
+	def __init__(self, pattern = "A"):
 		#self.reg_algorithm = reg_algorithm
 		#self.is_rpmnet = True if self.reg_algorithm == 'rpmnet' else False
 		#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 		self.reg_algorithm = registration_algorithm()
+		self.pattern = pattern
 
 	@staticmethod
 	def pc2points(data):
@@ -476,7 +432,7 @@ class Registration:
 		#if not self.is_rpmnet == 'rpmnet':
 		#	template, source = self.pc2points(template), self.pc2points(source)
 
-		result = self.reg_algorithm(template, source)
+		result = self.reg_algorithm(template, source, self.pattern)
 		return result
 
 def pc2open3d(data):
@@ -489,7 +445,7 @@ def pc2open3d(data):
 		print("Error in the shape of data given to Open3D!, Shape is ", data.shape)
 
 
-def display_results_sample(template, source, est_T, masked_template):
+def display_results_sample(template, source, est_T, masked_template, pattern):
   transformed_source = np.matmul(est_T[0:3, 0:3], source.T).T + est_T[0:3, 3]   # ※matmul：行列の積　　第一項：回転、第二項：平行移動、重心移動分も含まれる transformed =  R' * source + t
   #transformed_source = source + est_T[0:3, 3]
   #print(est_T[0:3, 0:3])
@@ -527,32 +483,32 @@ def display_results_sample(template, source, est_T, masked_template):
   o.paint_uniform_color([1, 0, 0])
   
   ### 正解を定義 ###
-  if theta == 0:
+  if pattern == "A":
   	## 0度 ##
   	ans_theta_x = np.radians(0)
   	ans_theta_y = np.radians(1)
   	ans_theta_z = np.radians(176)
-  elif theta == 45:
+  elif pattern == "45":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(45)
-  elif theta == 90:
+  elif pattern == "B":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-90)
-  elif theta == 135:
+  elif pattern == "135":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-45)
-  elif theta == "L_90":
+  elif pattern == "D":
   	## 90度 ##
   	ans_theta_x = np.radians(-3)
   	ans_theta_y = np.radians(-1)
   	ans_theta_z = np.radians(-85)
-  elif theta == "L_180":
+  elif pattern == "C":
   	## 90度 ##
   	ans_theta_x = np.radians(-12)
   	ans_theta_y = np.radians(-2)
@@ -578,10 +534,10 @@ def display_results_sample(template, source, est_T, masked_template):
   print("est_R:\n", est_T[0:3, 0:3])
   # 平行移動
   ans_t_ = [0, 0.008, -0.011]
-  if theta == "L_90":
+  if pattern == "D":
   
   	ans_t_ = [0.0055, 0.008, -0.011]
-  if theta == "L_180":
+  if pattern == "C":
   
   	ans_t_ = [0.006, 0.008, -0.011]
     

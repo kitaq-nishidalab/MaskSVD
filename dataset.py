@@ -13,7 +13,7 @@ import open3d as o3d
 import random
 
 def download_modelnet40():
-	BASE_DIR = "/home/nishidalab0/MaskNet/learning3d"
+	BASE_DIR = "learning3d"
 	DATA_DIR = os.path.join(BASE_DIR, os.pardir, 'data')
 	if not os.path.exists(DATA_DIR):
 		os.mkdir(DATA_DIR)
@@ -27,7 +27,7 @@ def download_modelnet40():
 def load_data(train, use_normals):
 	if train: partition = 'train'
 	else: partition = 'test'
-	BASE_DIR = "/home/nishidalab0/MaskNet/learning3d"
+	BASE_DIR = "learning3d"
 	DATA_DIR = os.path.join(BASE_DIR, os.pardir, 'data')
 	all_data = []
 	all_label = []
@@ -80,7 +80,7 @@ class ModelNet40Data(Dataset):
 		return self.shapes[label]
 		
 	def read_classes_ModelNet40(self):
-		BASE_DIR = "/home/nishidalab0/MaskNet/learning3d"
+		BASE_DIR = "learning3d"
 		DATA_DIR = os.path.join(BASE_DIR, os.pardir, 'data')
 		file = open(os.path.join(DATA_DIR, 'modelnet40_ply_hdf5_2048', 'shape_names.txt'), 'r')
 		shape_names = file.read()

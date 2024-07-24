@@ -1,3 +1,4 @@
+import argparse
 import os
 import numpy as np
 import torch
@@ -5,24 +6,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-import h5py
-import subprocess
-import shlex
-import json
-import glob
-from sklearn.neighbors import NearestNeighbors
-from scipy.spatial.distance import minkowski
-from scipy.spatial import cKDTree
-from scipy.spatial.transform import Rotation
-from torch import sin, cos
 import open3d as o3d
 from tqdm import tqdm
-import torchvision
-import logging
-from tensorboardX import SummaryWriter
+
 import network
 import dataset
 
+parser = argparse.ArgumentParser("MaskNet training", add_help=True)
+parser.add_argument("--save_path", "-s", type=str, required=True, help="path to save file")
+parser.add_argument("--epoch", type=int, default=300, help="epoch")
+parser.add_argument("--batch", type=int, default=16, help="batch size")
+args = parser.parse_args()
 ###################################
 #--ネットワークの定義--
 ###################################
@@ -51,7 +45,6 @@ index = 0
 
 template_sample, source_sample, igt_sample, gt_mask_sample = trainset.__getitem__(index)
 
-
 # template の値を確認
 print("Template:", template_sample)
 print(np.shape(template_sample.to('cpu').detach().numpy().copy()))
@@ -63,7 +56,7 @@ print(np.shape(template_sample.to('cpu').detach().numpy().copy()))
 
 #o3d.visualization.draw_geometries([pcd_template_sample, pcd_source_sample])
 
-batch_size = 16
+batch_size = args.batch
 test_batch_size = 8
 workers = 2
 
@@ -73,7 +66,7 @@ train_loader = DataLoader(trainset, batch_size=batch_size, shuffle=True, drop_la
 #--ネットワークの学習---
 ###################################
 # エポック数：データセットを何周するか
-epochs = 300
+epochs = args.epoch
 
 for epoch in range(epochs):
   print(epoch) # epoch数表示
@@ -113,7 +106,7 @@ for epoch in range(epochs):
 ###################################
 #--ネットワークの保存--
 ###################################
-save_path = "/home/nishidalab0/MaskNet/checkpoint/model_weight_epoch300_batchsize16.pth"
+save_path = args.save_path      #"/home/nishidalab0/MaskNet/checkpoint/model_weight_epoch300_batchsize16.pth"
 torch.save(model, save_path)
-
+print("Finish saving !!!!")
 
