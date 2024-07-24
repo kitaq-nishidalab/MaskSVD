@@ -1,23 +1,21 @@
 # MaskSVD
 
-かりやすくてカッコイイ名前をつける（今回は"hoge"という名前をつける）
+かりやすくてカッコイイ名前をつける
  
-"hoge"が何かを簡潔に紹介する
+何かを簡潔に紹介する
  
 # DEMO
  
-"hoge"の魅力が直感的に伝えわるデモ動画や図解を載せる
+魅力が直感的に伝えわるデモ動画や図解を載せる
  
 # Features
  
-"hoge"のセールスポイントや差別化などを説明する
+セールスポイントや差別化などを説明する
  
 # Requirement
  
-"hoge"を動かすのに必要なライブラリなどを列挙する
- 
-* huga 3.5.2
-* hogehuga 1.0.2
+MaskSVDを動かすのに必要なライブラリなどを列挙する
+
  
 # Installation
  
@@ -28,27 +26,28 @@ pip install huga_package
 ```
  
 # Usage
- 
-MaskNetの学習を実行する
- 
-```bash
-git clone https://github.com/hoge/~
-cd examples
-python3 train/training.py -s "checkpoint/sample.pth" --epoch 300
-```
- 
-# Note
- 
 
- 
+ MaskSVD(提案手法)を実行する
+
+```bash
+git clone https://github.com/Iwaiy/MaskSVD.git
+cd MaskSVD
+python3 T-pipe_test.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
+```
+
+
+MaskNetの学習を実行する
+
+```bash
+python3 training.py -s "checkpoint/sample.pth" --epoch 300
+```
+
+
+# Note
+
 # Author
  
 * Yu Iwai
 * The University of Kitakyushu
  
 # License
-
- 
-社内向けなら社外秘であることを明示してる
- 
-"hoge" is Confidential.
