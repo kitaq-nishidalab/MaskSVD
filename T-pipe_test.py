@@ -123,7 +123,7 @@ template_cheese = template_cheese.to(device)
 source_cheese = source_cheese.to(device)
 
 # 位置合わせ準備を行う（関数を呼び出す）
-registration_model = Registration_test.Registration()
+registration_model = Registration_test.Registration(pattern=pattern)
 
 start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
@@ -131,7 +131,7 @@ end = torch.cuda.Event(enable_timing=True)
 #####計測開始#####
 start.record()
 
-n = 1
+n = 100
 sum_diff_R = 0
 sum_diff_t = 0
 lists_R = []

@@ -54,7 +54,7 @@ def translate_to_origin(pointcloud):
 #Registration
 ###################
 # ICP registration module.
-class ICP:
+class SVD:
 	def __init__(self, threshold=0.1, max_iteration=100):
 		# threshold: 			Threshold for correspondences. (scalar)
 		# max_iterations:		Number of allowed iterations. (scalar)
@@ -190,20 +190,6 @@ class ICP:
 		
 		template = template.voxel_down_sample(voxel_size)
 		source = source.voxel_down_sample(voxel_size)
-		#template = o3d.geometry.keypoint.compute_iss_keypoints(template, salient_radius=0.004,
-               #                                        non_max_radius=0.005,
-               #                                         gamma_21=0.5,
-               #                                         gamma_32=0.5)
-		#source = o3d.geometry.keypoint.compute_iss_keypoints(source, salient_radius=0.005,
-                #                                        non_max_radius=0.005,
-                #                                        gamma_21=0.5,
-                #                                        gamma_32=0.5)
-		#source.paint_uniform_color([0, 1, 0])
-		#template.paint_uniform_color([0, 0, 1])
-		###print("\nダウンサンプリング後のサイズ")
-		###print("マスクテンプレ点群：", np.shape(np.array(template.points)))
-		###print("ソース点群：", np.shape(np.array(source.points)))
-		###o3d.visualization.draw_geometries([source, template])
 		
 		### マスクテンプレの主成分分析 ###
 		T_trans = np.array(template.points)
@@ -247,7 +233,7 @@ class ICP:
 		
 		#R = pca_us0_vector @ pca_us0_vector.T + pca_us1_vector @ pca_us1_vector.T + pca_us2_vector @ pca_ut2_vector.T
 		#R = pca_us0_vector @ pca_ut0_vector.T + pca_us1_vector @ pca_ut1_vector.T + pca_us2_vector @ pca_ut2_vector.T
-		print("\n", np.linalg.det(S_V_pca @ T_V_pca.T))
+		###print("\n", np.linalg.det(S_V_pca @ T_V_pca.T))
 		###print(S_V_pca @ T_V_pca.T)
 		if np.linalg.det(S_V_pca @ T_V_pca.T) < 0:
 			K = np.array([[-1, 0, 0],[0, 1, 0],[0, 0, 1]])     # 0度、45度、90度
@@ -258,6 +244,9 @@ class ICP:
 		###print(R)
 		###転置処理###
 		R = R.T
+		
+		#############################################################################################################
+		#############################################################################################################
 		### 回転後ソースの主成分分析 ###
 		ans = (R @ np.array(source.points).T).T
 		ans_cov = ans.T @ ans
@@ -267,11 +256,10 @@ class ICP:
 		ans_index = ans_W.argsort()[::-1]
 		ans_W = ans_W[ans_index]
 		ans_V_pca = ans_V_pca[:, ans_index]
-		
+
 		ans0_vector = ans_V_pca[:, 0].reshape([3,1])
 		ans1_vector = ans_V_pca[:, 1].reshape([3,1])
 		ans2_vector = ans_V_pca[:, 2].reshape([3,1])
-		
 		# 3Dベクトルを定義
 		ans_v1 = np.array(ans0_vector / 40)
 		ans_v2 = np.array(ans1_vector / 40)
@@ -282,106 +270,62 @@ class ICP:
 		pca_v4 = np.array(pca_us0_vector / 40)
 		pca_v5 = np.array(pca_us1_vector / 40)
 		pca_v6 = np.array(pca_us2_vector / 40)
-		
 		### マスクテンプレの主成分ベクトルと点群を表示 ###
 		fig = plt.figure(figsize = (6, 6))
 		ax = fig.add_subplot(111, projection='3d')
-		
 		# 3D座標を設定
 		coordinate_3d(ax, [-0.05, 0.05], [-0.05, 0.05], [-0.05, 0.05], grid = True)
-		
 		# 始点を設定
 		o = [0, 0, 0]
-		
 		visual_vector_3d(ax, o, pca_v1, "red")
 		visual_vector_3d(ax, o, pca_v2, "blue")
 		visual_vector_3d(ax, o, pca_v3, "green")
 		ax.scatter(np.asarray(template.points)[:,0], np.asarray(template.points)[:,1], np.asarray(template.points)[:,2], s = 3, c = "red")
-		
 		### ソースの主成分ベクトルと点群を表示 ###
 		fig = plt.figure(figsize = (6, 6))
 		ax = fig.add_subplot(111, projection='3d')
-		
 		# 3D座標を設定
 		coordinate_3d(ax, [-0.05, 0.05], [-0.05, 0.05], [-0.05, 0.05], grid = True)
-		
 		# 始点を設定
 		o = [0, 0, 0]
-		
 		visual_vector_3d(ax, o, pca_v4, "orange")
 		visual_vector_3d(ax, o, pca_v5, "cyan")
 		visual_vector_3d(ax, o, pca_v6, "lime")
 		ax.scatter(np.asarray(source.points)[:,0], np.asarray(source.points)[:,1], np.asarray(source.points)[:,2], s = 3, c = "lime")
-		
 		### SVD後ソース点群を表示 ###
 		fig = plt.figure(figsize = (6, 6))
 		ax = fig.add_subplot(111, projection='3d')
-		
 		# 3D座標を設定
 		coordinate_3d(ax, [-0.05, 0.05], [-0.05, 0.05], [-0.05, 0.05], grid = True)
-		
 		# 始点を設定
 		o = [0, 0, 0]
-		
 		visual_vector_3d(ax, o, ans_v1, "darkred")
 		visual_vector_3d(ax, o, ans_v2, "darkblue")
 		visual_vector_3d(ax, o, ans_v3, "darkgreen")
 		ax.scatter(ans[:, 0], ans[:, 1], ans[:, 2], s = 3, c = "darkgreen")
-		
 		fig.tight_layout() 
 		#plt.show()
+		###########################################################################################################
+		###########################################################################################################
 		
 		### SVDアルゴリズム（概略マッチング） ###
 		transformation = np.eye(4)
 		for i in range(3):
 			for j in range(3):
 				transformation[i][j] = R[i][j]
-				
-		print(transformation)
+		#print(transformation)
 		
-		#print(R @ np.array(source.points).T)
-		source_vis_2 = o3d.geometry.PointCloud()
-		numpy_source_vis = R @ np.array(source_vis.points).T
-		source_vis_2.points = o3d.utility.Vector3dVector(numpy_source_vis.T)
-		source_vis_2.paint_uniform_color([0, 1, 0])
-		#o3d.visualization.draw_geometries([template_vis, source_vis_2, o_geo])     # マスクテンプレ、SVD後ソース
-		source_vis_2.paint_uniform_color([1, 0, 0])
-		#o3d.visualization.draw_geometries([source_vis_2, source_b, o_geo])     # SVD後ソース、重心移動後ソース
-		#print(len(source.points))
-		#print(len(template.points))
-		
-		#print(np.shape(np.array(template_copy.points).T))
-		#print(np.shape(R.T @ np.array(source_copy.points).T))
-		#print(np.linalg.norm(np.array(template_copy.points).T - R.T @ np.array(source_copy.points).T,2))
-		"""
-		if np.linalg.norm(np.array(template_copy.points).T - R.T @ np.array(source_copy.points).T,2) < 1.0:
-			print(np.linalg.norm(np.array(template_copy.points).T - R.T @ np.array(source_copy.points).T,2) < 1.0)
-			est_R = transformation[0:3, 0:3].T		# SVD's rotation matrix (source -> template)
-			t_ = transformation[0:3, 3].reshape(1, -1)			# SVD's translation vector (source -> template)
-			est_T = transformation.T							# SVD's transformation matrix (source -> template) R -> R'
-			est_t = -self.source_mean 	# update predicted translation according to eq. 3
-			est_T[0:3, 3] = est_t
-			result = {'est_R': est_R,
-			          'est_t': est_t,
-			          'est_T': est_T}
-			#est_T[0, 0] = -1 * est_T[0, 0]
-			print(est_T)
-			print(t_)
-			if self.is_tensor: result = self.convert2tensor(result)
-			return result
-		"""
 		
 		### ICPアルゴリズム（精密マッチング） ###
 		res = o3d.pipelines.registration.registration_icp(source, template, self.threshold, transformation, criteria=self.criteria)	# icp registration in open3d.
 		#print("transformation:\n", res.transformation)
 		
 		est_R, est_t, est_T = self.postprocess(res)
-		
 		result = {'est_R': est_R,
 		          'est_t': est_t,
 		          'est_T': est_T}
 		
-		print(est_T)
+		#print(est_T)
 		#print(est_R)      # 回転移動(3×3)
 		#print(est_t)      # 平行移動
 		#source_temp = copy.deepcopy(source)
@@ -392,7 +336,6 @@ class ICP:
 		#source_temp.transform(transformation)
 		#o3d.visualization.draw_geometries([source_temp, target_temp, o_geo])
 		###print("\nSVD+ICPの変換行列：\n", est_T)      # 変換行列全体(4×4)、重心移動分も含まれる
-		
 		#print('\nfitness:', float(res.fitness))
 		#print("source:", np.shape(np.array(source.points)))
 		#print("template:", np.shape(np.array(template.points)))
@@ -404,7 +347,7 @@ class ICP:
 # Define Registration Algorithm.
 def registration_algorithm():
   
-  reg_algorithm = ICP()
+  reg_algorithm = SVD()
   
   return reg_algorithm
 
@@ -530,8 +473,9 @@ def display_results_sample(template, source, est_T, masked_template, pattern):
          [0, 0, 1]])
   # 回転行列を計算
   ans_R = R_x @ R_y @ R_z
-  print("ans_R:\n", ans_R)
-  print("est_R:\n", est_T[0:3, 0:3])
+  #print("ans_R:\n", ans_R)
+  #print("est_R:\n", est_T[0:3, 0:3])
+  
   # 平行移動
   ans_t_ = [0, 0.008, -0.011]
   if pattern == "D":
@@ -552,9 +496,9 @@ def display_results_sample(template, source, est_T, masked_template, pattern):
   rotation_angle_x = np.degrees(euler_angles[0])
   rotation_angle_y = np.degrees(euler_angles[1])
   rotation_angle_z = np.degrees(euler_angles[2])
-  print("\nRotation angle around x-axis:", rotation_angle_x, "degrees")
-  print("Rotation angle around y-axis:", rotation_angle_y, "degrees")
-  print("Rotation angle around z-axis:", rotation_angle_z, "degrees")
+  #print("\nRotation angle around x-axis:", rotation_angle_x, "degrees")
+  #print("Rotation angle around y-axis:", rotation_angle_y, "degrees")
+  #print("Rotation angle around z-axis:", rotation_angle_z, "degrees")
   ###print("\n回転移動の差：")
   diff_R_x = rotation_angle_x - np.degrees(ans_theta_x)
   diff_R_y = rotation_angle_y - np.degrees(ans_theta_y)
@@ -566,10 +510,10 @@ def display_results_sample(template, source, est_T, masked_template, pattern):
   
   ### 平行移動の差分 ###
   global diff_t
-  print("est_T[0:3, 3]")
-  print(est_T[0:3, 3])
-  print("ans_t ")
-  print(ans_t)
+  #print("est_T[0:3, 3]")
+  #print(est_T[0:3, 3])
+  #print("ans_t ")
+  #print(ans_t)
   diff_t = np.linalg.norm(est_T[0:3, 3] - ans_t)
   print("平行移動の差（L2ノルム）：", diff_t, "\n")
   
@@ -588,7 +532,7 @@ def display_results_sample(template, source, est_T, masked_template, pattern):
 
   #o3d.visualization.draw_geometries([template])                                    # テンプレ
   #o3d.visualization.draw_geometries([masked_template, source, ans_source])          # マスクテンプレ、ソース、正解ソース、原点
-  o3d.visualization.draw_geometries([template, ans_source])          # マスクテンプレ、ソース、正解ソース、原点
+  #o3d.visualization.draw_geometries([template, ans_source])          # マスクテンプレ、ソース、正解ソース、原点
   #o3d.visualization.draw_geometries([masked_template, source, source_t, o, ax_x, ax_y, ax_z])
   #o3d.visualization.draw_geometries([masked_template, source, transformed_source])  # マスクテンプレ、ソース、変換後ソース
   #o3d.visualization.draw_geometries([template, source, transformed_source])        # テンプレ、ソース、変換後ソース
