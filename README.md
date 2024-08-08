@@ -38,7 +38,7 @@ python3 T-pipe_test.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth
 Fast global registrationを実行する
 
 ```bash
-python3 training.py -s "checkpoint/sample.pth" --epoch 300
+python3 T-pipe_test_jurai_fast.py  --pattern "A"
 ```
 
 MaskNetの学習を実行する
