@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import h5py
+import argparse
 import subprocess
 import shlex
 import json
@@ -22,27 +23,32 @@ import random
 import Registration_test_jurai_ptlk
 import time
 
-# テンプレートデータのロード
-#pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016.pcd"
-pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd"
 
-# ソースデータのロード
-if Registration_test_jurai_ptlk.theta == 0:   ## 0度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_cheese_noise.pcd"
-elif Registration_test_jurai_ptlk.theta == 45:   ## 45度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_45_3.pcd"
-elif Registration_test_jurai_ptlk.theta == 90:   ## 90度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_90_1.pcd"
-elif Registration_test_jurai_ptlk.theta == 135:   ## 135度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_135_2.pcd"
-elif Registration_test_jurai_ptlk.theta == "L_90":   ## L90 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_90_4.pcd"
-	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd"
-elif Registration_test_jurai_ptlk.theta == "L_180":   ## L180 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_180_2.pcd"
-	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd"
+parser = argparse.ArgumentParser("Proposed method execute", add_help=True)
+parser.add_argument("--pattern", type=str, default="A", help="Target Pattern")
+
+args = parser.parse_args()
+
+pattern = args.pattern
+if  pattern== "A":   ## Pattern A  (0度) ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_cheese_noise.pcd" # ソースデータのロード
+elif pattern == "45":   ## 45度 ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_45_3.pcd" # ソースデータのロード
+elif pattern == "B":   ## Pattern B  (90度) ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_90_1.pcd" # ソースデータのロード
+elif pattern == "135":   ## 135度 ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_135_2.pcd" # ソースデータのロード
+elif pattern == "D":   ## Pattern D  (L90) ##
+	pcd_rot_file = "sensor_Ljoint_90_4.pcd" # テンプレートデータのロード
+	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd" # ソースデータのロード
+elif pattern == "C":   ## Pattern C  (L180) ##
+	pcd_rot_file = "sensor_Ljoint_180_2.pcd" # テンプレートデータのロード
+	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd" # ソースデータのロード
+
 
 # テンプレとソースを点群データに変換
 pcd_cheese = o3d.io.read_point_cloud(pcd_file)
@@ -100,7 +106,7 @@ while counter <= n:
 	result_cheese = registration_model.register(template_cheese, source_cheese)
 	est_T_cheese = result_cheese['est_T']     # est_T：RANSAC+ICPの変換行列
 	transformed_source = result_cheese['transformed_source']
-	print(result_cheese)
+	#print(result_cheese)
 
 	# RANSAC+ICP処理、点群の表示
 	Registration_test_jurai_ptlk.display_results_sample(
@@ -108,7 +114,8 @@ while counter <= n:
 		source_cheese.detach().cpu().numpy()[0], 
 		est_T_cheese.detach().cpu().numpy()[0], 
 		template_cheese.detach().cpu().numpy()[0],
-		transformed_source.detach().cpu().numpy()[0])
+		transformed_source.detach().cpu().numpy()[0],
+		pattern)
 	
 	sum_diff_R += Registration_test_jurai_ptlk.diff_R
 	sum_diff_t += Registration_test_jurai_ptlk.diff_t

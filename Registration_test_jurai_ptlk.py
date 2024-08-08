@@ -7,8 +7,7 @@ import Global_optimizer
 import os
 from torch import sin, cos
 import math
-global theta
-theta = 90
+
 
 
 def rotation_matrix_to_euler_angles(R):
@@ -623,7 +622,7 @@ def pc2open3d(data):
 		print("Error in the shape of data given to Open3D!, Shape is ", data.shape)
 
 
-def display_results_sample(template, source, est_T, masked_template, transformed_source):
+def display_results_sample(template, source, est_T, masked_template, transformed_source, pattern):
   transformed_source = np.matmul(est_T[0:3, 0:3], source.T).T + est_T[0:3, 3]     # ※matmul：行列の積　　第一項：回転、第二項：平行移動
   
   ### x軸の表示 ###
@@ -651,32 +650,32 @@ def display_results_sample(template, source, est_T, masked_template, transformed
   o.paint_uniform_color([1, 0, 0])
   
   ### 正解を定義 ###
-  if theta == 0:
+  if pattern == "A":
   	## 0度 ##
   	ans_theta_x = np.radians(0)
   	ans_theta_y = np.radians(1)
   	ans_theta_z = np.radians(-184)
-  elif theta == 45:
+  elif pattern == "45":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-135)
-  elif theta == 90:
+  elif pattern == "B":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-90)
-  elif theta == 135:
+  elif pattern == "135":
   	## 90度 ##
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-45)
-  elif theta == "L_90":
+  elif pattern == "D":
   	## 90度 ##
   	ans_theta_x = np.radians(-3)
   	ans_theta_y = np.radians(-1)
   	ans_theta_z = np.radians(-85)
-  elif theta == "L_180":
+  elif pattern == "C":
   	## 90度 ##
   	ans_theta_x = np.radians(-12)
   	ans_theta_y = np.radians(-2)
@@ -703,10 +702,10 @@ def display_results_sample(template, source, est_T, masked_template, transformed
   print("est_R:\n", est_T[0:3, 0:3])
   # 平行移動
   ans_t_ = [0, 0.008, -0.011]
-  if theta == "L_90":
+  if pattern == "D":
   
   	ans_t_ = [0.0055, 0.008, -0.011]
-  if theta == "L_180":
+  if pattern == "C":
   
   	ans_t_ = [0.006, 0.008, -0.011]
     
@@ -737,8 +736,8 @@ def display_results_sample(template, source, est_T, masked_template, transformed
   global diff_t
   diff_t = np.linalg.norm(est_T[0:3, 3] - ans_t)
   print("平行移動の差（L2ノルム）：", diff_t, "\n")
-  print(est_T[0:3, 3])
-  print(ans_t )
+  #print(est_T[0:3, 3])
+  #print(ans_t )
   
   template = pc2open3d(template)
   source = pc2open3d(source)
@@ -754,10 +753,10 @@ def display_results_sample(template, source, est_T, masked_template, transformed
   ans_source.paint_uniform_color([1/3, 1/3, 1/3])
 
   #o3d.visualization.draw_geometries([template])                                    # テンプレ
-  o3d.visualization.draw_geometries([masked_template, source, ans_source])          # マスクテンプレ、ソース、正解ソース、原点
+  #o3d.visualization.draw_geometries([masked_template, source, ans_source])          # マスクテンプレ、ソース、正解ソース、原点
   #o3d.visualization.draw_geometries([masked_template, source, source_t, o, ax_x, ax_y, ax_z])
   #o3d.visualization.draw_geometries([masked_template, source, transformed_source])  # マスクテンプレ、ソース、変換後ソース
-  o3d.visualization.draw_geometries([template, source, transformed_source, o])        # テンプレ、ソース、変換後ソース
+  #o3d.visualization.draw_geometries([template, source, transformed_source, o])        # テンプレ、ソース、変換後ソース
   #o3d.visualization.draw_geometries([template, masked_template, source])           # テンプレ、マスクテンプレ、ソース
   #o3d.visualization.draw_geometries([template, source])                            # テンプレ、ソース
   #o3d.visualization.draw_geometries([masked_template, source])                     # マスクテンプレ、ソース

@@ -234,7 +234,7 @@ class Registration:
 		elif len(data.shape) == 2:
 			return data[:, :3]
 
-	def register(self, template, source, p):
+	def register(self, template, source):
 		# template, source: 		Point Cloud [B, N, 3] (torch tensor)
 
 		# No need to use normals. Only use normals for RPM-Net.

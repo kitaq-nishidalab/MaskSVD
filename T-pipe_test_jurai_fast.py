@@ -103,7 +103,7 @@ lists_R = []
 lists_t = []
 while counter <= n:
 	# 従来手法（FGR、ICP）の実行（実際のデータを代入）
-	result_cheese = registration_model.register(template_cheese, source_cheese, 1)
+	result_cheese = registration_model.register(template_cheese, source_cheese)
 	est_T_cheese = result_cheese['est_T']     # est_T：FGR+ICPの変換行列
 
 	# FGR+ICP処理、点群の表示
