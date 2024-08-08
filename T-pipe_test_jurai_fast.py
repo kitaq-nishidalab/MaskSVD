@@ -1,3 +1,4 @@
+import argparse
 import numpy as np
 import torch
 import torch.nn as nn
@@ -22,31 +23,35 @@ import random
 import Registration_test_jurai_fast
 import time
 
+
+parser = argparse.ArgumentParser("Proposed method execute", add_help=True)
+parser.add_argument("--pattern", type=str, default="A", help="Target Pattern")
+
+args = parser.parse_args()
 # モデルのロード
 save_path = "/home/nishidalab0/MaskNet/checkpoint/model_weight_epoch300_batchsize32_plane.pth"
 model_load = torch.load(save_path)
 
-# テンプレートデータのロード
-#pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016.pcd"
-pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half_unnoise.pcd"
 
-# ソースデータのロード
-if Registration_test_jurai_fast.theta == 0:   ## 0度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_cheese_noise.pcd"
-elif Registration_test_jurai_fast.theta == 45:   ## 45度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_45_3.pcd"
-elif Registration_test_jurai_fast.theta == 90:   ## 90度 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_90_1.pcd"
-elif Registration_test_jurai_fast.theta == 135:   ## 135度 ##
-	pass
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_tpip_135_2.pcd"
-elif Registration_test_jurai_fast.theta == "L_90":   ## L90 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_90_4.pcd"
-	pcd_file = "//home/nishidalab0/MaskNet/WMU2LR2020_half_unnoise.pcd"
-elif Registration_test_jurai_fast.theta == "L_180":   ## L180 ##
-	pcd_rot_file = "/home/nishidalab0/MaskNet/sensor_Ljoint_180_2.pcd"
-	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half_unnoise.pcd"
+pattern = args.pattern
+if  pattern== "A":   ## Pattern A  (0度) ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_cheese_noise.pcd" # ソースデータのロード
+elif pattern == "45":   ## 45度 ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_45_3.pcd" # ソースデータのロード
+elif pattern == "B":   ## Pattern B  (90度) ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_90_1.pcd" # ソースデータのロード
+elif pattern == "135":   ## 135度 ##
+	pcd_file = "/home/nishidalab0/MaskNet/TNUTEJN016_half2.pcd" # テンプレートデータのロード
+	pcd_rot_file = "sensor_tpip_135_2.pcd" # ソースデータのロード
+elif pattern == "D":   ## Pattern D  (L90) ##
+	pcd_rot_file = "sensor_Ljoint_90_4.pcd" # テンプレートデータのロード
+	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd" # ソースデータのロード
+elif pattern == "C":   ## Pattern C  (L180) ##
+	pcd_rot_file = "sensor_Ljoint_180_2.pcd" # テンプレートデータのロード
+	pcd_file = "/home/nishidalab0/MaskNet/WMU2LR2020_half2.pcd" # ソースデータのロード
 
 # テンプレとソースを点群データに変換
 pcd_cheese = o3d.io.read_point_cloud(pcd_file)
@@ -78,7 +83,7 @@ template_cheese = template_cheese.to(device)
 source_cheese = source_cheese.to(device)
 
 # 位置合わせ準備を行う（関数を呼び出す）、定義するだけ
-registration_model = Registration_test_jurai_fast.Registration()
+registration_model = Registration_test_jurai_fast.Registration(pattern=pattern)
 
 start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
@@ -89,79 +94,25 @@ end = torch.cuda.Event(enable_timing=True)
 # ※template_cheese、source_cheeseはtensor型
 ###print("\nテンプレ点群の配列のサイズ：", template_cheese.size())
 ###print("ソース点群の配列のサイズ：", source_cheese.size(), "\n")
-########################################################
-#パラメータ調整自動化
-#######################################################
-"""
-params = np.arange(0.001, 0.1, 0.001)
-kouho = []
-for p in params:
-	print(round(p, 5))
-	counter = 1
-	n = 100
-	sum_diff_R = 0
-	sum_diff_t = 0
-	lists_R = []
-	lists_t = []
-	while counter <= n:
-		# 従来手法（RANSAC、ICP）の実行（実際のデータを代入）
-		result_cheese = registration_model.register(template_cheese, source_cheese, round(p, 5))
-		est_T_cheese = result_cheese['est_T']     # est_T：RANSAC+ICPの変換行列
-
-		# RANSAC+ICP処理、点群の表示
-		Registration_test_jurai_fast.display_results_sample(
-			template_cheese.detach().cpu().numpy()[0], 
-			source_cheese.detach().cpu().numpy()[0], 
-			est_T_cheese.detach().cpu().numpy()[0], 
-			template_cheese.detach().cpu().numpy()[0])
-	
-		sum_diff_R += Registration_test_jurai_fast.diff_R
-		sum_diff_t += Registration_test_jurai_fast.diff_t
-	
-		lists_R.append(Registration_test_jurai_fast.diff_R)
-		lists_t.append(Registration_test_jurai_fast.diff_t)
-	
-		counter += 1
-	# 平均
-	mean_diff_R = sum_diff_R / n
-	mean_diff_t = sum_diff_t / n
-	print("\n回転行列のL2ノルムの平均：", mean_diff_R)
-	print("平行移動ベクトルのL2ノルムの平均：", mean_diff_t)
-	# 分散
-	dev_diff_R = 0
-	dev_diff_t = 0
-	for i in range(n):
-		dev_diff_R += (lists_R[i] - mean_diff_R)**2
-		dev_diff_t += (lists_t[i] - mean_diff_t)**2
-	var_diff_R = dev_diff_R / n
-	var_diff_t = dev_diff_t / n
-	print("\n回転行列のL2ノルムの分散：", var_diff_R)
-	print("平行移動ベクトルのL2ノルムの分散：", var_diff_t)
-	if mean_diff_R < 40 :
-		kouho.append(round(p, 5))
-print("候補")
-for k in kouho:
-	 print(k)
-"""
-###################################################################################
 
 counter = 1
-n = 1
+n = 100
 sum_diff_R = 0
 sum_diff_t = 0
 lists_R = []
 lists_t = []
 while counter <= n:
-	# 従来手法（RANSAC、ICP）の実行（実際のデータを代入）
+	# 従来手法（FGR、ICP）の実行（実際のデータを代入）
 	result_cheese = registration_model.register(template_cheese, source_cheese, 1)
-	est_T_cheese = result_cheese['est_T']     # est_T：RANSAC+ICPの変換行列
+	est_T_cheese = result_cheese['est_T']     # est_T：FGR+ICPの変換行列
 
-	# RANSAC+ICP処理、点群の表示
+	# FGR+ICP処理、点群の表示
 	Registration_test_jurai_fast.display_results_sample(
 		template_cheese.detach().cpu().numpy()[0], 
 		source_cheese.detach().cpu().numpy()[0], 
 		est_T_cheese.detach().cpu().numpy()[0], 
-		template_cheese.detach().cpu().numpy()[0])
+		template_cheese.detach().cpu().numpy()[0],
+		pattern)
 	
 	sum_diff_R += Registration_test_jurai_fast.diff_R
 	sum_diff_t += Registration_test_jurai_fast.diff_t

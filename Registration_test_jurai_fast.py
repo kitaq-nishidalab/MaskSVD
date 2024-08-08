@@ -1,54 +1,7 @@
 import numpy as np
 import torch
-"""
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
-import h5py
-import subprocess
-import shlex
-import json
-import glob
-from sklearn.neighbors import NearestNeighbors
-from scipy.spatial.distance import minkowski
-from scipy.spatial import cKDTree
-from scipy.spatial.transform import Rotation
-from torch import sin, cos
-"""
 import open3d as o3d
-"""
-from tqdm import tqdm
-import torchvision
-import logging
-import random
-#import PointNetLK
-import os
-"""
 import Global_optimizer_fast
-"""
-import numpy.linalg as LA
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScalerCorrespondenceChecker
-"""
-
-global theta
-theta = "L_180"
-
-
-
-"""
-def rotation_matrix_to_euler_angles(R):
-    # Extract angles using trigonometric relations
-    roll = np.arctan2(R[2, 1], R[2, 2])
-    pitch = np.arctan2(-R[2, 0], np.sqrt(R[2, 1]**2 + R[2, 2]**2))
-    yaw = np.arctan2(R[1, 0], R[0, 0])
-
-    return np.array([roll, pitch, yaw])print("est_T[0:3, 3]")
-  print(est_T[0:3, 3])
-  print("ans_t ")
-  print(ans_t)
-"""
     
 def rotation_matrix_to_euler_angles(R):
     # Extract angles using trigonometric relations
@@ -148,8 +101,9 @@ class ICP:
 		result['est_T']=torch.tensor(result['est_T']).to(device).float().view(-1, 4, 4)			# Transformation matrix [B, 4, 4] (source -> template)
 		return result
 
-	# icp registration.
-	def __call__(self, template, source, p):
+	# FGR + icp registration.
+	def __call__(self, template, source, pattern):
+		print(pattern)
 		self.is_tensor = torch.is_tensor(template)
 		
 		### 原点を表示 ###
@@ -197,21 +151,21 @@ class ICP:
 		template_vis = template
 		source_vis = source
 		
-		if theta == 0:
+		if pattern == "A":
 			voxel_size = 0.01  # 0度  0.009
-		#elif theta == 45:
+		#elif pattern == 45:
 		#	voxel_size = 0.011     # 45度
-		elif theta == 90:
+		elif pattern == "B":
 			voxel_size = 0.011     # 90度
-		#elif theta == 135:
+		#elif pattern == 135:
 		#	voxel_size = 0.015     # 135度
-		elif theta == "L_90":
+		elif pattern == "D":
 			voxel_size = 0.03    # 90度
-		elif theta == "L_180":
+		elif pattern == "C":
 			voxel_size = 0.02   # 180度 0.08, 0.0321, 0.0711, 0.0721, 0.0731, 0.0741
 		
 		### 前処理 ###
-		source, template, source_down, template_down, source_fpfh, template_fpfh = Global_optimizer_fast.prepare_dataset(voxel_size, template, source)
+		source, template, source_down, template_down, source_fpfh, template_fpfh = Global_optimizer_fast.prepare_dataset(voxel_size, template, source, pattern)
 		#source, template, source_down, template_down, source_fpfh, template_fpfh = Global_optimizer_fast.prepare_dataset(p, template, source)
 		###print("\n前処理後のテンプレートの点群数：", np.shape(np.array(template_down.points)))
 		###print("前処理後のソースの点群数：", np.shape(np.array(source_down.points)), "\n")
@@ -221,21 +175,20 @@ class ICP:
 		template_down.paint_uniform_color([1, 0, 0])
 		#o3d.visualization.draw_geometries([source_down, template_down])
 		
-		### RANSACアルゴリズム（概略マッチング） ###
-		#result_ransac = Global_optimizer_fast.execute_global_registration(source_down, template_down, source_fpfh, template_fpfh, voxel_size)
-		result_ransac = Global_optimizer_fast.execute_fast_global_registration(source_down, template_down, source_fpfh, template_fpfh, voxel_size)
-		#result_ransac = Global_optimizer_fast.execute_fast_global_registration(source_down, template_down, source_fpfh, template_fpfh, p)
+		### FGRアルゴリズム（概略マッチング） ###
+		#result_fgr = Global_optimizer_fast.execute_global_registration(source_down, template_down, source_fpfh, template_fpfh, voxel_size)
+		result_fgr = Global_optimizer_fast.execute_fast_global_registration(source_down, template_down, source_fpfh, template_fpfh, voxel_size, pattern)
 		
 		source_vis_2 = o3d.geometry.PointCloud()
-		#numpy_source_vis = result_ransac.transformation.T @ np.array(source_vis.points).T
-		numpy_source_vis = np.matmul(result_ransac.transformation[0:3, 0:3], np.array(source_down.points).T).T + result_ransac.transformation[0:3, 3]
+		#numpy_source_vis = result_fgr.transformation.T @ np.array(source_vis.points).T
+		numpy_source_vis = np.matmul(result_fgr.transformation[0:3, 0:3], np.array(source_down.points).T).T + result_fgr.transformation[0:3, 3]
 		source_vis_2.points = o3d.utility.Vector3dVector(numpy_source_vis)
 		source_vis_2.paint_uniform_color([0, 1, 0])
-		o3d.visualization.draw_geometries([template_down, source_vis_2, o])     # テンプレ、RANSAC後ソース
-		###print("\nRANSACの変換行列：\n", result_ransac.transformation)
+		#o3d.visualization.draw_geometries([template_down, source_vis_2, o])     # テンプレ、FGR後ソース
+		###print("\nFGRの変換行列：\n", result_fgr.transformation)
 		
 		### ICPアルゴリズム（精密マッチング） ###
-		res = o3d.pipelines.registration.registration_icp(source, template, self.threshold, result_ransac.transformation, criteria=self.criteria)	# icp registration in open3d.
+		res = o3d.pipelines.registration.registration_icp(source, template, self.threshold, result_fgr.transformation, criteria=self.criteria)	# icp registration in open3d.
 		
 		est_R, est_t, est_T = self.postprocess(res)
 		
@@ -246,7 +199,7 @@ class ICP:
 		#print(est_R)      # 回転移動(3×3)
 		#print(est_t)      # 平行移動
 		"""
-		###print("\nRANSAC+ICPの変換行列：\n", est_T)      # 変換行列全体(4×4)、重心移動分も含まれる
+		###print("\nFGR+ICPの変換行列：\n", est_T)      # 変換行列全体(4×4)、重心移動分も含まれる
 		
 		#print('\nfitness:', float(res.fitness))
 		#print("source:", np.shape(np.array(source.points)))
@@ -260,29 +213,19 @@ class ICP:
 def registration_algorithm():
   
   reg_algorithm = ICP()
-  """
-  pretrained_reg = "/home/nishidalab0/MaskNet/no_noise_pointlk.pth"
   
-  pnlk = PointNetLK.PointNetLK()
-  if pretrained_reg:
-      assert os.path.isfile(pretrained_reg)
-      pnlk.load_state_dict(torch.load(pretrained_reg, map_location='cpu'))
-      print("PointNetLK pretrained model loaded successfully!")
-  device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  pnlk = pnlk.to(device)
-  reg_algorithm = pnlk
-  """
   
   return reg_algorithm
 
 
 # Register template and source pairs.
 class Registration:
-	def __init__(self):
+	def __init__(self, pattern="A"):
 		#self.reg_algorithm = reg_algorithm
 		#self.is_rpmnet = True if self.reg_algorithm == 'rpmnet' else False
 		#device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 		self.reg_algorithm = registration_algorithm()
+		self.pattern = pattern
 
 	@staticmethod
 	def pc2points(data):
@@ -298,7 +241,7 @@ class Registration:
 		#if not self.is_rpmnet == 'rpmnet':
 		#	template, source = self.pc2points(template), self.pc2points(source)
 
-		result = self.reg_algorithm(template, source, p)
+		result = self.reg_algorithm(template, source, self.pattern)
 		return result
 
 def pc2open3d(data):
@@ -311,7 +254,8 @@ def pc2open3d(data):
 		print("Error in the shape of data given to Open3D!, Shape is ", data.shape)
 
 
-def display_results_sample(template, source, est_T, masked_template):
+def display_results_sample(template, source, est_T, masked_template, pattern):
+  #print(pattern)
   transformed_source = np.matmul(est_T[0:3, 0:3], source.T).T + est_T[0:3, 3]     # ※matmul：行列の積　　第一項：回転、第二項：平行移動、重心移動分も含まれる
   #print(est_T)
   
@@ -345,33 +289,27 @@ def display_results_sample(template, source, est_T, masked_template):
   ax_z.paint_uniform_color([1/3, 1/3, 1/3])
   
   ### 正解を定義 ###
-  if theta == 0:
-  	## 0度 ##
+  if pattern == "A":
   	ans_theta_x = np.radians(0)
   	ans_theta_y = np.radians(1)       
   	ans_theta_z = np.radians(176)
-  elif theta == 45:
-  	## 90度 ##
+  elif pattern == "45":
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(45)
-  elif theta == 90:
-  	## 90度 ##
+  elif pattern == "B":
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-90)
-  elif theta == 135:
-  	## 90度 ##
+  elif pattern == "135":
   	ans_theta_x = np.radians(2)
   	ans_theta_y = np.radians(0.2)
   	ans_theta_z = np.radians(-45)
-  elif theta == "L_90":
-  	## 90度 ##
+  elif pattern == "D":
   	ans_theta_x = np.radians(-3)
   	ans_theta_y = np.radians(-1)
   	ans_theta_z = np.radians(-85)
-  elif theta == "L_180":
-  	## 90度 ##
+  elif pattern == "C":
   	ans_theta_x = np.radians(-12)
   	ans_theta_y = np.radians(-2)
   	ans_theta_z = np.radians(176)
@@ -394,10 +332,10 @@ def display_results_sample(template, source, est_T, masked_template):
   ans_R = R_z @ R_y @ R_x
   # 平行移動
   ans_t_ = [0, 0.008, -0.011]
-  if theta == "L_90":
+  if pattern == "D":
   
   	ans_t_ = [0.0055, 0.008, -0.011]
-  if theta == "L_180":
+  if pattern == "C":
   
   	ans_t_ = [0.006, 0.008, -0.011]
   
@@ -448,7 +386,7 @@ def display_results_sample(template, source, est_T, masked_template):
   #o3d.visualization.draw_geometries([template])                                    # テンプレ
   ###o3d.visualization.draw_geometries([template, source, ans_source, o])                 # テンプレ、ソース、正解ソース、原点
   #o3d.visualization.draw_geometries([template, source, source_t, o, ax_x, ax_y, ax_z])
-  #o3d.visualization.draw_geometries([template, transformed_source])         # テンプレ、ソース、変換後ソース、原点
+  o3d.visualization.draw_geometries([template, transformed_source])         # テンプレ、ソース、変換後ソース、原点
   #o3d.visualization.draw_geometries([template, masked_template, source])           # テンプレ、マスクテンプレ、ソース
   #o3d.visualization.draw_geometries([template, source])                            # テンプレ、ソース
   #o3d.visualization.draw_geometries([masked_template, source])                     # マスクテンプレ、ソース

@@ -20,10 +20,9 @@ def draw_registration_result(source, target, transformation):
 ############################################
 # 点群のダウンサンプリングと特徴量計算
 ############################################
-def preprocess_point_cloud(pcd, voxel_size):
+def preprocess_point_cloud(pcd, voxel_size, pattern):
     print(":: Downsample with a voxel size %.3f." % voxel_size)
     pcd_down = pcd.voxel_down_sample(voxel_size)
-    
     """
     pcd_down = o3d.geometry.keypoint.compute_iss_keypoints(pcd, salient_radius=voxel_size,
                                                        non_max_radius=0.012,
@@ -31,28 +30,27 @@ def preprocess_point_cloud(pcd, voxel_size):
                                                        gamma_32=0.5)
     """
 
-
     #radius_normal = voxel_size * 2.0   # default
-    if Registration_test_jurai_fast.theta == 0:
+    if pattern == "A":
     	radius_normal = voxel_size * 2.0   # 0度
-    elif Registration_test_jurai_fast.theta == 90:
+    elif pattern == "B":
     	radius_normal = voxel_size * 2.0   # 90度
-    elif Registration_test_jurai_fast.theta == "L_90":
+    elif pattern == "D":   ## Pattern D  (L90) ##
     	radius_normal = voxel_size * 2.0   # L90度
-    elif Registration_test_jurai_fast.theta == "L_180":
+    elif pattern == "C":   ## Pattern C  (L180) ##
     	radius_normal = voxel_size * 2.0   # L180度
     print(":: Estimate normal with search radius %.3f." % radius_normal)
     pcd_down.estimate_normals(
         o3d.geometry.KDTreeSearchParamHybrid(radius=radius_normal, max_nn=30))
 
     #radius_feature = voxel_size * 5.0   # default
-    if Registration_test_jurai_fast.theta == 0:
+    if pattern == "A":
     	radius_feature = voxel_size * 4.0   # 0度
-    elif Registration_test_jurai_fast.theta == 90:
+    elif pattern == "B":
     	radius_feature = voxel_size * 5.0   # 90度
-    elif Registration_test_jurai_fast.theta == "L_90":
+    elif pattern == "D":   ## Pattern D  (L90) ##
     	radius_feature = voxel_size * 5.0   # L90度
-    elif Registration_test_jurai_fast.theta == "L_180":
+    elif pattern == "C":   ## Pattern C  (L180) ##
     	radius_feature = voxel_size * 4.0   # L180度
     print(":: Compute FPFH feature with search radius %.3f." % radius_feature)
     pcd_fpfh = o3d.pipelines.registration.compute_fpfh_feature(
@@ -60,38 +58,38 @@ def preprocess_point_cloud(pcd, voxel_size):
         o3d.geometry.KDTreeSearchParamHybrid(radius=radius_feature, max_nn=100))
     return pcd_down, pcd_fpfh
 
-def prepare_dataset(voxel_size, target, source):
+def prepare_dataset(voxel_size, target, source, pattern):
 
     #draw_registration_result(source, target, np.identity(4))
 
-    source_down, source_fpfh = preprocess_point_cloud(source, voxel_size)
-    target_down, target_fpfh = preprocess_point_cloud(target, voxel_size)
+    source_down, source_fpfh = preprocess_point_cloud(source, voxel_size, pattern)
+    target_down, target_fpfh = preprocess_point_cloud(target, voxel_size, pattern)
     return source, target, source_down, target_down, source_fpfh, target_fpfh
 
 
 ############################################
-# Fast Global Registration
+# Fast Global Registration(FGR)
 ############################################
-def execute_fast_global_registration(source_down, target_down, source_fpfh, target_fpfh, voxel_size):
-    if Registration_test_jurai_fast.theta == 0:
+def execute_fast_global_registration(source_down, target_down, source_fpfh, target_fpfh, voxel_size, pattern):
+    if pattern == "A":
     	distance_threshold = voxel_size * 0.5   # 0度
     	decrease_mu = True
     	division_factor = 0.2 #1.4
     	iteration_number = 100 #64
     	tuple_scale = 0.3 #95
-    elif Registration_test_jurai_fast.theta == 90:
+    elif pattern == "B":
     	distance_threshold = voxel_size * 0.02   # 90度
     	decrease_mu = True
     	division_factor = 0.2 #1.4
     	iteration_number = 100 #64
     	tuple_scale = 0.3 #95
-    elif Registration_test_jurai_fast.theta == "L_90":
+    elif pattern == "D":   ## Pattern D  (L90) ##
     	distance_threshold = voxel_size * 0.06    # L90度
     	decrease_mu = True
     	division_factor = 0.2 #1.4
     	iteration_number = 100 #64
     	tuple_scale = 0.3 #95
-    elif Registration_test_jurai_fast.theta == "L_180":
+    elif pattern == "C":   ## Pattern C  (L180) ##
     	distance_threshold = voxel_size * 0.5    # L180度
     	decrease_mu = True
     	division_factor = 0.2 #1.4
