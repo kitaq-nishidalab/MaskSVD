@@ -57,7 +57,7 @@ PointNetLK executes.
 python3 T-pipe_test_jurai_ptlk.py  --pattern "A"
 ```
 
---pattern "< A or B or C or D >"　can chenges.　
+--pattern "< A or B or C or D >"　can chenge.　
 
 ## Train Masknet
 MaskNetの学習を実行する
