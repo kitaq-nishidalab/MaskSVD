@@ -27,27 +27,35 @@ pip install torch
 ```
  
 # Usage
+## MaskSVD（Proposed method）and Comparative method for Accuracy
 
- MaskSVD(提案手法)を実行する
+ MaskSVD executes.
 
 ```bash
 git clone https://github.com/Iwaiy/MaskSVD.git
 cd MaskSVD
 python3 T-pipe_test.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
 ```
-Fast global registrationを実行する
+
+Fast global registration executes.
 
 ```bash
 python3 T-pipe_test_jurai_fast.py  --pattern "A"
 ```
 
-##Train Masknet
+PointNetLK executes.
+
+```bash
+python3 T-pipe_test_jurai_ptlk.py  --pattern "A"
+```
+
+## Train Masknet
 MaskNetの学習を実行する
 
 ```bash
 python3 training.py -s "checkpoint/sample.pth" --epoch 300
 ```
-
+--pattern "<A or B or C or D>"　can chenges.　
 
 # Note
 
