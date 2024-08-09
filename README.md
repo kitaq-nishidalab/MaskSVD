@@ -74,3 +74,5 @@ python3 training.py -s "checkpoint/sample.pth" --epoch 300
 * The University of Kitakyushu
  
 # License
+
+This project is release under the MIT License.
