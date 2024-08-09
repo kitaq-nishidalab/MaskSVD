@@ -1,4 +1,4 @@
-# MaskSVD
+# MaskSVD: The method using Masknet and SVD
 
 わかりやすくてカッコイイ名前をつける
  
@@ -41,6 +41,7 @@ Fast global registrationを実行する
 python3 T-pipe_test_jurai_fast.py  --pattern "A"
 ```
 
+###Train Masknet
 MaskNetの学習を実行する
 
 ```bash
