@@ -29,6 +29,12 @@ pip install torch
 # Usage
 ## Demo MaskSVD
 
+Demonstrate pattern "A", "B", "C", "D".
+
+```bash
+python3 T-pipe_demo.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
+```
+
 ## Test MaskSVD（Proposed method）and Comparative method for Accuracy
 
  MaskSVD executes.
