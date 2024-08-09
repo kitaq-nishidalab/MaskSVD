@@ -27,7 +27,7 @@ pip install torch
 ```
  
 # Usage
-## MaskSVD（Proposed method）and Comparative method for Accuracy
+## Test MaskSVD（Proposed method）and Comparative method for Accuracy
 
  MaskSVD executes.
 
