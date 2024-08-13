@@ -7,8 +7,12 @@
  ![Fig 1_5](https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0)
  
 # DEMO
+
+Red PCD is Target.
+Green PCD is Measured PCD obtained by LiDAR.
  
-魅力が直感的に伝えわるデモ動画や図解を載せる
+* Point Cloud Dataset(PCD) 
+
 <p align="center">
       <img src="https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e" height="200">
       <img src="https://github.com/user-attachments/assets/0a3075bf-cf28-4b9f-8104-22c716e6283b" height="200">
