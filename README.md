@@ -47,6 +47,8 @@ MaskNet register shapes of model PCD and measured PCD.
 
 # Features
 
+The fast global registration and PointNetLK employed to compare the performance of the proposed method.
+
 ### A comparison of the time
 
 <p align="center">
