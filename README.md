@@ -2,7 +2,7 @@
 [**Paper**] [SICE2023_Iwai11.pdf](https://github.com/user-attachments/files/16595458/SICE2023_Iwai11.pdf)
 
 
-<img src="https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0" height="500">
+<img src="https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0" height="400">
  
 # DEMO
 
