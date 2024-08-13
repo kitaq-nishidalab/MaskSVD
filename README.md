@@ -10,7 +10,7 @@
  
 魅力が直感的に伝えわるデモ動画や図解を載せる
 
-<p align="center">![Tpip_template2](https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e)
+<p align="center">
 
       <img src="https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e" height="200", width="270">
       <img src="https://github.com/user-attachments/assets/810f926a-996b-44f1-af77-6368efb4d406" height="200">
