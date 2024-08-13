@@ -18,7 +18,7 @@ Green PCD is Measured PCD obtained by LiDAR.
       <img src="https://github.com/user-attachments/assets/0a3075bf-cf28-4b9f-8104-22c716e6283b" height="200">
 </p>
 
-![画面収録-2024-08-13-14 39 05](https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8)
+<img src="https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8" height="200" width="270">
 
 # Features
 
