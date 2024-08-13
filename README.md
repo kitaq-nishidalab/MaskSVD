@@ -16,7 +16,7 @@ We confirmed that proposed method can execute from 3 to 50 times faster than con
 Red PCD is Target. \
 Green PCD is Measured PCD obtained by LiDAR.
  
-* Point Cloud Dataset(PCD) 
+### Point Cloud Dataset(PCD):
 
 <p align="center">
       <img src="https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e" height="200">
@@ -25,17 +25,21 @@ Green PCD is Measured PCD obtained by LiDAR.
 
 PCD distributions are aligned by PCD density adjusting.
 
+### PCD density adjusting:
+
 <p align="center">
       <img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="250" >
 </p>
 
 MaskNet register shapes of model PCD and measured PCD.
 
+### The function of MaskNet:
+
 <p align="center">
       <img src="https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8" height="300">
 </p>
 
-Posture estimation 
+### Posture estimation: 
 
 <p align="center">
       <img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="200" >
