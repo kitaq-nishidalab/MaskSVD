@@ -3,13 +3,15 @@
 わかりやすくてカッコイイ名前をつける
  
 何かを簡潔に紹介する
+
+ ![Fig 1_5](https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0)
  
 # DEMO
  
 魅力が直感的に伝えわるデモ動画や図解を載せる
  
 # Features
- 
+
 セールスポイントや差別化などを説明する
  
 # Requirement
