@@ -1,11 +1,8 @@
 # MaskSVD: The method using Masknet and SVD
 [**Paper**] [SICE2023_Iwai11.pdf](https://github.com/user-attachments/files/16595458/SICE2023_Iwai11.pdf)
 
-わかりやすくてカッコイイ名前をつける
- 
-何かを簡潔に紹介する
 
- ![Fig 1_5](https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0)
+<img src="https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0" height="200">
  
 # DEMO
 
