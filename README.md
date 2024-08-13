@@ -19,16 +19,20 @@ Green PCD is Measured PCD obtained by LiDAR.
 PCD distributions are aligned by PCD density adjusting.
 
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="200" >
+      <img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="300" >
 </p>
 
 MaskNet register shapes of model PCD and measured PCD.
 
-<img src="https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8" height="300" >
+<p align="center">
+      <img src="https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8" height="300">
+</p>
 
 Posture estimation 
 
-<img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="200" >
+<p align="center">
+      <img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="200" >
+</p>
 
 # Features
 
