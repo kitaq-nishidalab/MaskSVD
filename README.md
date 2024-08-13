@@ -19,7 +19,6 @@ Green PCD is Measured PCD obtained by LiDAR.
 </p>
 
 
- <img src="https://github.com/user-attachments/assets/f4634790-6565-41cb-a9b1-8b95ae4ef50f" height="200">
 
 # Features
 
