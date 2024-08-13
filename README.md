@@ -11,7 +11,7 @@
 魅力が直感的に伝えわるデモ動画や図解を載せる
 
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/27b74f9f-4170-4688-a23f-b7533c6f04dc" height="200">
+      <img src="https://github.com/user-attachments/assets/5251691a-9ed5-46d8-9976-ee0eb002407e" height="200">
       <img src="https://github.com/user-attachments/assets/810f926a-996b-44f1-af77-6368efb4d406" height="200">
 </p>
  
