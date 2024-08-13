@@ -47,23 +47,24 @@ MaskNet register shapes of model PCD and measured PCD.
 
 # Features
 
+### A comparison of the time
 
-セールスポイントや差別化などを説明する
- 
+<p align="center">
+      <img src="https://github.com/user-attachments/assets/5b695d36-5611-431c-8b40-84fcbf2d45df" height="200" >
+      <img src="https://github.com/user-attachments/assets/aa764a99-f6fc-485b-8f97-0aea9d1406e5" height="200" >
+</p>
+
 # Requirement
  
 MaskSVDを動かすのに必要なライブラリなどを列挙する
-
  
 # Installation
- 
-Requirementで列挙したライブラリなどのインストール方法を説明する
- 
+
 ```bash
 pip install open3d
 pip install torch
 ```
- 
+
 # Usage
 ## Demo MaskSVD
 
@@ -98,13 +99,12 @@ python3 T-pipe_test_jurai_ptlk.py  --pattern "A"
 --pattern "< A or B or C or D >"　can chenge.　
 
 ## Train Masknet
-MaskNetの学習を実行する
+
+Learning of MaskNet executes.
 
 ```bash
 python3 training.py -s "checkpoint/sample.pth" --epoch 300
 ```
-
-# Note
 
 # Author
  
