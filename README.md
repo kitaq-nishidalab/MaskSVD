@@ -9,11 +9,9 @@
 # DEMO
  
 魅力が直感的に伝えわるデモ動画や図解を載せる
-
 <p align="center">
-
       <img src="https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e" height="200">
-      <img src="https://github.com/user-attachments/assets/810f926a-996b-44f1-af77-6368efb4d406" height="200">
+      <img src="https://github.com/user-attachments/assets/0a3075bf-cf28-4b9f-8104-22c716e6283b" height="200">
 </p>
  
 # Features
