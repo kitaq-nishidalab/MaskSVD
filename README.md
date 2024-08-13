@@ -20,7 +20,7 @@ Green PCD is Measured PCD obtained by LiDAR.
 
 PCD distributions are aligned by PCD density adjusting.
 
-<img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="300" >
+<img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="200" >
 
 MaskNet register shapes of model PCD and measured PCD.
 
