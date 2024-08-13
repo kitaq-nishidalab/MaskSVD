@@ -53,7 +53,7 @@ The fast global registration and PointNetLK employed to compare the performance 
 
 <p align="center">
       <img src="https://github.com/user-attachments/assets/5b695d36-5611-431c-8b40-84fcbf2d45df" height="350" >
-      <img src="https://github.com/user-attachments/assets/aa764a99-f6fc-485b-8f97-0aea9d1406e5" height="350" >
+      <img src="https://github.com/user-attachments/assets/aa764a99-f6fc-485b-8f97-0aea9d1406e5" height="400" >
 </p>
 
 # Requirement
