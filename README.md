@@ -1,9 +1,14 @@
 # MaskSVD: The method using Masknet and SVD
+
 [**Paper**] [SICE2023_Iwai11.pdf](https://github.com/user-attachments/files/16595458/SICE2023_Iwai11.pdf)
+
+In this work, a fast posture estimation method using SVD and MaskNet was proposed.
+We confirmed that proposed method can execute from 3 to 50 times faster than conventional method.
 
 <p align="center">
       <img src="https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0" height="300">
 </p>
+
 # DEMO
 
 Red PCD is Target. \
