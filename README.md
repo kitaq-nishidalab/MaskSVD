@@ -57,8 +57,8 @@ The fast global registration and PointNetLK employed to compare the performance 
 </p>
 
 # Requirement
- 
-MaskSVDを動かすのに必要なライブラリなどを列挙する
+
+
  
 # Installation
 
