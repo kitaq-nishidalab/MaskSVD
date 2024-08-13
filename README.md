@@ -24,7 +24,7 @@ MaskNet register shapes of model PCD and measured PCD.
 
 Posture estimation 
 
-<img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="300" >
+<img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="200" >
 
 # Features
 
