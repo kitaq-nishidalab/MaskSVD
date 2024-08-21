@@ -107,6 +107,9 @@ Learning of MaskNet executes.
 ```bash
 python3 training.py -s "checkpoint/sample.pth" --epoch 300
 ```
+# Acknowledgement
+
+https://github.com/vinits5/masknet/tree/main
 
 # Author
  
