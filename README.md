@@ -61,7 +61,6 @@ The fast global registration and PointNetLK employed to compare the performance 
 ```bash
 pip install numpy
 pip install open3d
-pip install torch
 pip install -U scikit-learn
 pip install h5py
 pip install torch==2.2.0
