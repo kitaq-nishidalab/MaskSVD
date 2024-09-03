@@ -58,6 +58,8 @@ The fast global registration and PointNetLK employed to compare the performance 
  
 # Installation
 
+CPU only
+
 ```bash
 pip install numpy
 pip install open3d
@@ -67,6 +69,12 @@ pip install torch==2.2.0
 pip install tqdm
 pip install torchvision
 pip install matplotlib
+```
+
+GPU
+
+```bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
 ```bash
