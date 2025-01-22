@@ -12,6 +12,10 @@ A Kalman filter was also applied to reduce noise in the inference time series.
 <p align="center">
       <img src="https://github.com/user-attachments/assets/f7560ade-6a0c-4eea-a27c-76246054ff47" height="200" width="600">
 
+
+https://github.com/user-attachments/assets/cb892dd0-d525-4c30-aa5d-c1145f745cfe
+
+
 </p>
 
 # DEMO
