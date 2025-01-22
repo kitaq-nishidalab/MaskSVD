@@ -16,7 +16,8 @@ A Kalman filter was also applied to reduce noise in the inference time series.
 ### Posture estimation: 
 
 <p align="center">
-      <video src="https://github.com/user-attachments/assets/a05ac91f-5baa-4228-a74c-b37b6ef6e41c" autoplay muted>
+      <video src="https://github.com/user-attachments/assets/be980ad2-f0ce-44a3-b8ec-53a2dcfeaf78" autoplay muted>
+            
 </p>
 
 # Features
