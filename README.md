@@ -51,36 +51,31 @@ https://pytorch.org/
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-```bash
-git clone https://github.com/Iwaiy/MaskSVD.git
-cd MaskSVD
-```
 
 # Usage
 
-## Test MaskSVD（Proposed method）and Comparative method for Accuracy
+## MaskSVD(+Kalman filter)
 
- MaskSVD executes.
+3D sensor is bring up.
 
 ```bash
-git clone https://github.com/Iwaiy/MaskSVD.git
-cd MaskSVD
+cd ~/<work_space>/
+roslaunch realsense2_camera rs_camera.launch enable_pointcloud:=true
+```
+
+Preprocessing is executeed.
+
+```bash
+cd ~/<work_space>
+rosrun mask_svd point_cloud_processor
+```
+
+Posture estimation executes.
+
+```bash
+cd ~/<work_space>/src/MaskSVD
 python3 T-pipe_test.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
 ```
-
-Fast global registration executes.
-
-```bash
-python3 T-pipe_test_jurai_fast.py  --pattern "A"
-```
-
-PointNetLK executes.
-
-```bash
-python3 T-pipe_test_jurai_ptlk.py  --pattern "A"
-```
-
---pattern "< A or B or C or D >"　can chenge.　
 
 # Acknowledgement
 
