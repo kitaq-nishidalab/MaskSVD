@@ -10,8 +10,7 @@ A Kalman filter was also applied to reduce noise in the inference time series.
 ### Integration of the MaskNet-based Posture estimation method into Robot vision systems:
 
 <p align="center">
-      <img src="
-            " height="200" width="600">
+      <img src="https://github.com/user-attachments/assets/66977d8f-ea21-4f9d-96a6-0030557f2d76" height="200" width="600">
 </p>
 
 
