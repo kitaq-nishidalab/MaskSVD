@@ -10,7 +10,7 @@ A Kalman filter was also applied to reduce noise in the inference time series.
 ### Processing flow of the proposed method:
 
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/e07e608d-5152-4a59-b39f-7f5b1bdd62c0" height="300">
+      <img src="https://github.com/user-attachments/assets/5db60142-2232-4f53-8a6d-ac830a5518fd" height="200">
 </p>
 
 # DEMO
