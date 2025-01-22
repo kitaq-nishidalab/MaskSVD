@@ -11,43 +11,12 @@ A Kalman filter was also applied to reduce noise in the inference time series.
 
 <p align="center">
       <img src="https://github.com/user-attachments/assets/f7560ade-6a0c-4eea-a27c-76246054ff47" height="200" width="600">
-      <img src="https://github.com/user-attachments/assets/cb892dd0-d525-4c30-aa5d-c1145f745cfe" height="200" width="600">
-
-
-</p>
-
-# DEMO
-
-Red PCD is Target. \
-Green PCD is Measured PCD obtained by LiDAR.
- 
-### Point Cloud Dataset(PCD):
-
-<p align="center">
-      <img src="https://github.com/user-attachments/assets/541bdc40-3e8d-4c9f-ae19-8cd6f88f562e" height="200">
-      <img src="https://github.com/user-attachments/assets/0a3075bf-cf28-4b9f-8104-22c716e6283b" height="200">
-</p>
-
-PCD distributions are aligned by PCD density adjusting.
-
-### PCD density adjusting:
-
-<p align="center">
-      <img src="https://github.com/user-attachments/assets/0b3c1752-225a-42c4-8fed-edc2080912be" height="250" >
-</p>
-
-MaskNet register shapes of model PCD and measured PCD.
-
-### The function of MaskNet:
-
-<p align="center">
-      <img src="https://github.com/user-attachments/assets/bcfac44b-8926-4a15-9538-be655536fde8" height="300">
 </p>
 
 ### Posture estimation: 
 
 <p align="center">
-      <img src="https://github.com/user-attachments/assets/bf8de7c7-8fbf-43e2-8356-c5917fcb2b14" height="200" >
+      <video src="https://github.com/user-attachments/assets/a05ac91f-5baa-4228-a74c-b37b6ef6e41c">
 </p>
 
 # Features
@@ -90,19 +59,7 @@ cd MaskSVD
 ```
 
 # Usage
-## Demo MaskSVD
 
-Demonstrate pattern "A", "B", "C", "D".
-
-```bash
-python3 T-pipe_demo.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
-```
-## Note
-This program requires GPU.
-So, if you have only CPU, please change program as shown below.
-```bash
-model_load = torch.load(save_path, map_location=torch.device('cpu'))
-```
 ## Test MaskSVD（Proposed method）and Comparative method for Accuracy
 
  MaskSVD executes.
@@ -127,13 +84,6 @@ python3 T-pipe_test_jurai_ptlk.py  --pattern "A"
 
 --pattern "< A or B or C or D >"　can chenge.　
 
-## Train Masknet
-
-Learning of MaskNet executes.
-
-```bash
-python3 training.py -s "checkpoint/sample.pth" --epoch 300
-```
 # Acknowledgement
 
 https://github.com/vinits5/masknet/tree/main
