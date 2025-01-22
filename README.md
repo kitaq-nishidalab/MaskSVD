@@ -73,8 +73,8 @@ rosrun mask_svd point_cloud_processor
 Posture estimation executes.
 
 ```bash
-cd ~/<work_space>/src/MaskSVD
-python3 T-pipe_test.py -s checkpoint/model_weight_epoch300_batchsize32_plane.pth --pattern "A"
+cd ~/<work_space>/src/MaskSVD/scripts/
+python3 kalman_estimate.py 
 ```
 
 # Acknowledgement
